@@ -8,15 +8,18 @@ public class Field {
     public static final char EMPTY = '.';
     private static final int SIZE = 3;
 
+    private final FieldListener listener;
+
     char[][] field;
 
-    public Field() {
-        this(SIZE);
+    public Field(FieldListener listener) {
+        this(SIZE, listener);
     }
 
-    public Field(int size) {
+    public Field(int size, FieldListener listener) {
         if (size < 1) throw new IllegalArgumentException("size must be >= 1");
         this.field = new char[size][size];
+        this.listener = listener;
         initField();
     }
 
@@ -27,34 +30,40 @@ public class Field {
         }
     }
 
-    public boolean isEmpty(int x, int y) {
-        validateCoordinates(x, y);
-        return field[x][y] == EMPTY;
-    }
-
     public void printField() {
         System.out.print(this);
     }
+
+    public boolean validateCoordinates(int row, int col) {
+        return row >= 0 && row < SIZE && col >= 0 && col < SIZE;
+    }
+
+    public boolean isEmpty(int x, int y) {
+        return field[x][y] == EMPTY;
+    }
+
 
     public boolean createSymbol(int x, int y, boolean isCross) {
         if (field[x][y] != EMPTY)
             return false;
         char symbol = getSymbol(isCross);
         this.field[x][y] = symbol;
+        if (listener != null)
+            listener.onFieldChange(this);
         return true;
     }
-    public boolean checkFill() {
-        int countEmtpy = 0;
+    public boolean isFill() {
+        int countEmpty = 0;
         for (char[] i : this.field) {
             for (char j : i) {
                 if (j == EMPTY)
-                    countEmtpy++;
+                    countEmpty++;
             }
         }
-        return countEmtpy == 0;
+        return countEmpty == 0;
     }
 
-    public boolean checkWin() {
+    public boolean isWin() {
 
         for(int i = 0; i < field.length; i++) {
             if (field[0][i] != EMPTY && field[0][i] == field[1][i] && field[0][i] == field[2][i])
@@ -93,11 +102,6 @@ public class Field {
             sb.append("|\n");
         }
         return sb.toString();
-    }
-    private void validateCoordinates(int row, int col) {
-        if (row < 0 || row >= SIZE || col < 0 || col >= SIZE) {
-            throw new IndexOutOfBoundsException("Coordinates out of bounds: (" + row + "," + col + ")");
-        }
     }
 
     private char getSymbol(boolean isCross) {
