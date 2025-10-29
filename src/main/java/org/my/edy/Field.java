@@ -1,57 +1,48 @@
 package org.my.edy;
 
-public class Field {
-    private final char CROSS = 'X';
-    private final char ZERO = '0';
-    private final char EMPTY = '.';
-    private final int SIZE = 3;
+import java.util.Arrays;
 
-    char[][] field = new char[SIZE][SIZE];
+public class Field {
+    public static final char CROSS = 'X';
+    public static final char ZERO = '0';
+    public static final char EMPTY = '.';
+    private static final int SIZE = 3;
+
+    char[][] field;
 
     public Field() {
+        this(SIZE);
+    }
+
+    public Field(int size) {
+        if (size < 1) throw new IllegalArgumentException("size must be >= 1");
+        this.field = new char[size][size];
         initField();
     }
 
+
     private void initField() {
-        for (int i = 0; i < SIZE; i ++) {
-            for (int j = 0; j < SIZE; j ++) {
-                this.field[i][j] = EMPTY;
-            }
+        for (char[] row : field) {
+            Arrays.fill(row, EMPTY);
         }
     }
 
-    public void printField() {
-        System.out.print(" ");
-        for (int i = 0; i < SIZE; i++) {
-            System.out.print(" | " + i);
-        }
-        System.out.println(" |");
-        for (int i = 0; i < SIZE; i ++) {
-            System.out.println("---------------");
-            System.out.print(i + " ");
-            for (int j = 0; j < SIZE; j ++) {
-                System.out.print("|" + " " + this.field[i][j] + " ");
-            }
-            System.out.println("|");
-        }
-    }
-
-    public boolean checkEmpty(int x, int y) {
+    public boolean isEmpty(int x, int y) {
+        validateCoordinates(x, y);
         return field[x][y] == EMPTY;
     }
 
+    public void printField() {
+        System.out.print(this);
+    }
+
     public boolean createSymbol(int x, int y, boolean isCross) {
+        if (field[x][y] != EMPTY)
+            return false;
         char symbol = getSymbol(isCross);
         this.field[x][y] = symbol;
         return true;
     }
-
-    private char getSymbol(boolean isCross) {
-        if (isCross)
-            return CROSS;
-        return ZERO;
-    }
-
     public boolean checkFill() {
         int countEmtpy = 0;
         for (char[] i : this.field) {
@@ -84,7 +75,35 @@ public class Field {
         return SIZE;
     }
 
-    public boolean isEmpty(int r, int c) {
-        return false;
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("  ");
+        for (int i = 0; i < SIZE; i++) {
+            sb.append(" | ").append(i);
+        }
+        sb.append(" |\n");
+        for (int i = 0; i < SIZE; i ++) {
+            sb.append("---------------\n");
+            sb.append(i).append(" ");
+            for (int j = 0; j < SIZE; j ++) {
+                sb.append("| ").append(field[i][j]).append(" ");
+            }
+            sb.append("|\n");
+        }
+        return sb.toString();
     }
+    private void validateCoordinates(int row, int col) {
+        if (row < 0 || row >= SIZE || col < 0 || col >= SIZE) {
+            throw new IndexOutOfBoundsException("Coordinates out of bounds: (" + row + "," + col + ")");
+        }
+    }
+
+    private char getSymbol(boolean isCross) {
+        if (isCross)
+            return CROSS;
+        return ZERO;
+    }
+
 }

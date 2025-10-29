@@ -29,7 +29,7 @@ class FieldTest {
         f.createSymbol(0, 0, true);
         f.createSymbol(0, 1, true);
         f.createSymbol(0, 2, true);
-        assertTrue(f.hasWinner());
+        assertTrue(f.checkWin());
     }
 
     @Test
@@ -38,7 +38,7 @@ class FieldTest {
         f.createSymbol(0, 1, false);
         f.createSymbol(1, 1, false);
         f.createSymbol(2, 1, false);
-        assertTrue(f.hasWinner());
+        assertTrue(f.checkWin());
     }
 
     @Test
@@ -47,7 +47,7 @@ class FieldTest {
         f.createSymbol(0, 0, true);
         f.createSymbol(1, 1, true);
         f.createSymbol(2, 2, true);
-        assertTrue(f.hasWinner());
+        assertTrue(f.checkWin());
     }
 
     @Test
@@ -56,7 +56,7 @@ class FieldTest {
         f.createSymbol(0, 2, false);
         f.createSymbol(1, 1, false);
         f.createSymbol(2, 0, false);
-        assertTrue(f.hasWinner());
+        assertTrue(f.checkWin());
     }
 
     @Test
@@ -76,8 +76,8 @@ class FieldTest {
                 f.createSymbol(r, c, isCross);
             }
         }
-        assertTrue(f.isFull());
-        assertFalse(f.hasWinner());
+        assertTrue(f.checkFill());
+        assertFalse(f.checkWin());
     }
 
     @Test
