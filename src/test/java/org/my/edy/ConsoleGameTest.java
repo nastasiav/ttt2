@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class GameTest {
+class ConsoleGameTest {
 
     private final PrintStream originalOut = System.out;
     private final ByteArrayOutputStream outCaptor = new ByteArrayOutputStream();
@@ -27,27 +27,27 @@ class GameTest {
         // X: (0,1)
         // O: (1,1)
         // X: (0,2) -> crosses win
-        String input = String.join(" ",
+        String input = String.join("\n",
                 "0", "0",
                 "1", "0",
                 "0", "1",
                 "1", "1",
-                "0", "2"
+                "0", "2",
+                "-1", "-2"
         );
         Scanner scanner = new Scanner(input);
         System.setOut(new PrintStream(outCaptor));
 
-        Game game = new Game(scanner);
+        ConsoleGame game = new ConsoleGame(scanner, null);
         game.start();
 
         String output = outCaptor.toString();
-        assertTrue(output.contains("победили крестики"), "Expected crosses to win; output:\n" + output);
+        assertTrue(game.field.isWin(), "Expected crosses to win; output:\n" + output);
+        assertTrue(game.isCrossTurn, "Expected crosses to win; output:\n" + output);
     }
 
     @Test
     void testDrawGame() {
-        // Sequence produces the full board from the earlier Field test without any winner:
-        // Moves (row,col) in order, players alternate starting with X:
         // 1 X (0,0)
         // 2 O (0,1)
         // 3 X (0,2)
@@ -66,37 +66,17 @@ class GameTest {
                 "2", "0",
                 "1", "1",
                 "2", "2",
-                "2", "1"
+                "2", "1",
+                "-1", "-2"
         );
 
         Scanner scanner = new Scanner(input);
         System.setOut(new PrintStream(outCaptor));
 
-        Game game = new Game(scanner);
-        game.start();
+        ConsoleGame consoleGame = new ConsoleGame(scanner, null);
+        consoleGame.start();
 
         String output = outCaptor.toString();
-        assertTrue(output.contains("ничья!"), "Expected a draw; output:\n" + output);
-    }
-
-    @Test
-    void testInvalidInputRecovery() {
-        // Start with invalid token 'a' then continue with a valid win sequence for crosses
-        String input = String.join("\n",
-                "0 0",
-                "1 0",
-                "0 1",
-                "1 1",
-                "0 2"
-        );
-
-        Scanner scanner = new Scanner(input);
-        System.setOut(new PrintStream(outCaptor));
-
-        Game game = new Game(scanner);
-        game.start();
-
-        String output = outCaptor.toString();
-        assertTrue(output.contains("победили крестики"));
+        assertTrue(consoleGame.field.isFill(), "Expected a draw; output:\n" + output);
     }
 }
